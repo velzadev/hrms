@@ -106,6 +106,32 @@ Use the following credentials to log in:
 	```
 3. You can access the site at `http://hrms.local:8080`
 
+## Desk UI theme (this fork)
+
+This repository also carries a separate, brand-neutral Desk UI theme app in
+[`custom_apps/company_ui_theme/`](custom_apps/company_ui_theme/README.md): dashboard styling for
+cards, widgets, dialogs and menus using Frappe's own colours, plus a light/dark toggle in every page
+header. It is not part of the `hrms` Python package and changes no HRMS code; it is installed into
+the bench as its own Frappe app.
+
+Setting up a v16 bench with HRMS from this fork and the theme:
+
+```sh
+bench init --frappe-branch version-16 frappe-bench && cd frappe-bench
+bench get-app erpnext --branch version-16
+bench get-app https://github.com/velzadev/hrms --branch version-16
+bench new-site hrms.local
+bench --site hrms.local install-app erpnext hrms
+
+# Link and install the theme app (see its README for details and uninstalling)
+ln -s hrms/custom_apps/company_ui_theme apps/company_ui_theme
+./env/bin/python -m pip install -e apps/company_ui_theme
+grep -qx company_ui_theme sites/apps.txt || printf '\ncompany_ui_theme\n' >> sites/apps.txt
+bench build --app company_ui_theme
+bench --site hrms.local install-app company_ui_theme
+bench start
+```
+
 ## Learning and Community
 
 1. [Frappe School](https://frappe.school) - Learn Frappe Framework and ERPNext from the various courses by the maintainers or from the community.

@@ -1,0 +1,197 @@
+/*
+ * Company UI Theme — neutral Desk styling for Frappe v16 / HRMS v16.
+ *
+ * Loaded through `app_include_css` in hooks.py, so it only reaches Desk pages
+ * (desk.html). Public website pages, the login page and the HRMS PWA at /hrms
+ * do not load it.
+ *
+ * Colours are Frappe's own: every colour below is one of Frappe's theme
+ * variables (--card-bg, --border-color, --text-muted, --focus-default, ...),
+ * so the light and dark themes stay exactly Frappe's. This file only adds
+ * shape (radii), borders, soft shadows, a few type weights and the styles for
+ * the header theme toggle. Layout, sizes, fields and behaviour are unchanged.
+ *
+ * Theme selection is Frappe's own: <html data-theme="light|dark">, set by
+ * frappe.ui.set_theme() from <html data-theme-mode>. company_ui_theme.js only
+ * changes data-theme-mode. Dark-only rules use :root[data-theme="dark"], which
+ * never matches the `data-theme` attribute Frappe also puts on badges, buttons
+ * and theme-preview cards.
+ *
+ * To restyle, change the tokens in section 1 only. The --ui-theme-* prefix is
+ * this app's namespace.
+ */
+
+/* ------------------------------------------------------------------ */
+/* 1. Tokens (shape and elevation only — no colours of their own)      */
+/* ------------------------------------------------------------------ */
+
+:root {
+	--ui-theme-radius: 8px; /* controls, menus, sidebar rows */
+	--ui-theme-radius-lg: 12px; /* cards, widgets, dialogs */
+	--ui-theme-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.06);
+	--ui-theme-shadow-raised: 0 8px 24px -6px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+/* Flat cards in dark mode; menus and dialogs keep a deeper shadow */
+:root[data-theme="dark"] {
+	--ui-theme-shadow: none;
+	--ui-theme-shadow-raised: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Component rules                                                  */
+/* ------------------------------------------------------------------ */
+
+/* ---- Cards and workspace widgets: 12px radius, 1px border, soft shadow ---- */
+.frappe-card,
+.widget,
+.number-widget-box,
+.shortcut-widget-box {
+	background-color: var(--card-bg);
+	border: 1px solid var(--border-color);
+	border-radius: var(--ui-theme-radius-lg);
+	box-shadow: var(--ui-theme-shadow);
+}
+
+@media (hover: hover) {
+	.widget.shortcut-widget-box:hover,
+	.widget.links-widget-box:hover {
+		border-color: var(--dark-border-color);
+	}
+}
+
+.widget .widget-title {
+	font-weight: 600;
+}
+
+/* ---- Sidebar ---- */
+.body-sidebar .standard-sidebar-item.active-sidebar {
+	border-radius: var(--ui-theme-radius);
+}
+
+.body-sidebar .standard-sidebar-item.active-sidebar .item-anchor {
+	font-weight: 500;
+}
+
+.sidebar-header .header-title {
+	font-weight: 600;
+}
+
+/* ---- Buttons ---- */
+.btn.btn-primary {
+	border-radius: var(--ui-theme-radius);
+}
+
+.btn.btn-primary:focus-visible,
+.es-button:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-default);
+}
+
+.btn:disabled,
+.btn.disabled,
+.es-button:disabled {
+	cursor: not-allowed;
+}
+
+/* ---- Inputs ---- */
+.frappe-control .form-control,
+.page-form .form-control,
+.modal .form-control {
+	border-radius: var(--ui-theme-radius);
+}
+
+/* ---- Child-table and report headers: neutral, slightly recessed ---- */
+.form-grid .grid-heading-row,
+.dt-cell--header .dt-cell__content {
+	background-color: var(--subtle-fg);
+	color: var(--text-muted);
+}
+
+/* ---- Dialogs ---- */
+.modal-content {
+	border: 1px solid var(--border-color);
+	border-radius: var(--ui-theme-radius-lg);
+	box-shadow: var(--ui-theme-shadow-raised);
+}
+
+.modal-header {
+	border-bottom-color: var(--border-color);
+}
+
+.modal-footer {
+	border-top-color: var(--border-color);
+}
+
+/* ---- Menus / popovers: rounded, bordered, visible hover ---- */
+.dropdown-menu,
+.es-menu,
+.awesomplete > ul {
+	border: 1px solid var(--border-color);
+	border-radius: var(--ui-theme-radius);
+	box-shadow: var(--ui-theme-shadow-raised);
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus,
+.es-menu__item[data-highlighted],
+.awesomplete > ul > li[aria-selected="true"] {
+	background-color: var(--fg-hover-color);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Theme toggle (inserted by company_ui_theme.js into .page-head)   */
+/* ------------------------------------------------------------------ */
+
+.ui-theme-toggle {
+	flex: 0 0 auto;
+	margin-right: var(--margin-xs, 5px);
+	color: var(--text-muted);
+}
+
+@media (hover: hover) {
+	.ui-theme-toggle:hover {
+		color: var(--text-color);
+	}
+}
+
+.ui-theme-toggle:focus-visible {
+	outline: none;
+	box-shadow: var(--focus-default);
+}
+
+/* Show the icon for the mode the button switches *to* */
+.ui-theme-toggle .ui-theme-icon-sun,
+:root[data-theme="dark"] .ui-theme-toggle .ui-theme-icon-moon {
+	display: none;
+}
+
+:root[data-theme="dark"] .ui-theme-toggle .ui-theme-icon-sun {
+	display: inline-flex;
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Motion                                                           */
+/* ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: no-preference) {
+	body,
+	.page-head,
+	.body-sidebar,
+	.frappe-card,
+	.widget,
+	.modal-content {
+		transition:
+			background-color 0.2s ease,
+			border-color 0.2s ease,
+			color 0.2s ease;
+	}
+
+	.ui-theme-toggle svg {
+		transition: transform 0.2s ease;
+	}
+
+	.ui-theme-toggle:active svg {
+		transform: rotate(-20deg);
+	}
+}
