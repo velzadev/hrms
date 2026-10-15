@@ -1,13 +1,21 @@
 ## Company UI Theme
 
-A reusable, brand-neutral Desk UI theme for Frappe HRMS v16 (Frappe v16, ERPNext v16, HRMS v16).
+The Qulix visual theme for the Frappe HRMS v16 Desk (Frappe v16, ERPNext v16, HRMS v16).
+
+| Branch | Theme in this folder |
+| --- | --- |
+| `main` | **Qulix** (this README) |
+| `version-16` | Brand-neutral (Frappe's own colours) |
 
 It is a pure UI layer: no DocTypes, no patches, no database changes, and no Frappe, ERPNext or
 HRMS files are modified. It adds:
 
-- **Dashboard styling** for Desk (workspaces, cards, widgets, dialogs, menus, child tables and
-  report headers): rounded corners, 1px borders, soft shadows in light mode, flat cards in dark
-  mode. All colours are Frappe's own theme variables, so the light and dark themes stay Frappe's.
+- **Qulix dashboard styling** for Desk: the coral/orange brand on primary buttons, focus rings,
+  checkboxes, tabs, selected sidebar rows and list rows, the active rail tile and a thin gradient
+  stripe under each page header; plus rounded corners, 1px borders, soft shadows in light mode
+  and flat cards in dark mode. Surfaces, text and borders stay Frappe's own theme variables.
+- **Login page styling**: brand primary button, focus ring and a gradient accent on the login and
+  update-password pages only.
 - **A light/dark toggle** in every page header, kept in sync with Frappe's own theme switcher.
 - **Optional, per-site relabelling** of the Desk app switcher (off unless configured), and an
   optional script that writes per-site branding settings. Neither ships any branding.
@@ -20,8 +28,8 @@ instead of being fetched with `bench get-app`.
 ### Requirements
 
 - A Frappe v16 bench with Frappe, ERPNext and HRMS v16 (Python 3.14, as for Frappe v16)
-- HRMS fetched from `https://github.com/velzadev/hrms` (branch `version-16`), which contains
-  this folder
+- HRMS fetched from `https://github.com/velzadev/hrms`, which contains this folder: branch
+  `main` for the Qulix theme, `version-16` for the neutral one
 
 ### Installation
 
@@ -29,7 +37,8 @@ Run from the bench directory (the one containing `apps/`, `sites/` and `env/`):
 
 ```bash
 # 1. Get HRMS from this repository, if the bench does not have it yet
-bench get-app https://github.com/velzadev/hrms --branch version-16
+#    (use --branch version-16 instead for the neutral theme)
+bench get-app https://github.com/velzadev/hrms --branch main
 
 # 2. Link the theme app into apps/ (the target is relative to apps/)
 ln -s hrms/custom_apps/company_ui_theme apps/company_ui_theme
@@ -66,9 +75,10 @@ The CSS and JS are plain (non-`.bundle`) files served from `/assets/company_ui_t
 
 | File | Purpose |
 | --- | --- |
-| `company_ui_theme/public/css/company_ui_theme.css` | Shape and elevation tokens, component rules, toggle styles |
+| `company_ui_theme/public/css/company_ui_theme.css` | Qulix brand tokens, shape and elevation tokens, Desk component rules, toggle styles |
+| `company_ui_theme/public/css/company_ui_theme_web.css` | Login and update-password page styling (scoped to those pages) |
 | `company_ui_theme/public/js/company_ui_theme.js` | Theme controller: saved preference, header toggle, sync with Frappe's switcher |
-| `company_ui_theme/hooks.py` | Includes both files on Desk (`app_include_css` / `app_include_js`), registers `boot.py` |
+| `company_ui_theme/hooks.py` | Includes the Desk CSS/JS (`app_include_css` / `app_include_js`) and the login CSS (`web_include_css`), registers `boot.py` |
 | `company_ui_theme/boot.py` | Optional app-switcher relabelling (see below) |
 | `company_ui_theme/branding.py` | Optional per-site branding script (see below) |
 
@@ -77,10 +87,35 @@ While `bench start` is running, a hard refresh is enough after editing them. Run
 these files without a version query, so after deploying a change run `bench clear-cache` and ask
 users to hard-refresh.
 
-To restyle, change only the `--ui-theme-*` tokens at the top of the CSS (radii and shadows). For
-colours, use Frappe's variables (`var(--primary-color)`, `var(--text-color)`, `var(--text-muted)`,
-`var(--border-color)`, `var(--card-bg)`, `var(--fg-color)`) instead of hard-coded values, and test
-both themes.
+To restyle, change only the tokens in section 1 of `company_ui_theme.css` (`--qx-*` brand colours,
+`--ui-theme-*` radii and shadows), and the matching block at the top of
+`company_ui_theme_web.css`. For neutral colours, use Frappe's variables (`var(--text-color)`,
+`var(--text-muted)`, `var(--border-color)`, `var(--card-bg)`, `var(--fg-color)`) instead of
+hard-coded values, and test both themes.
+
+### Qulix brand tokens
+
+The reference colours are estimates taken from the Qulix brand images and are meant to be
+adjusted once official values are available. Filled controls that carry text use deeper or
+lighter shades of the same hue so that text meets WCAG AA (4.5:1); the true gradient is used only
+for decorative accents, with dark glyphs on it.
+
+| Token | Light | Dark | Used for |
+| --- | --- | --- | --- |
+| `--qx-coral` / `--qx-orange` | `#FF626F` / `#FF8B3D` | same | Brand reference; sidebar and notification edges |
+| `--qx-gradient` | coral → orange, 135° | same | Header stripe, active rail tile, login accent |
+| `--qx-on-gradient` | `#171717` | same | Glyphs on the gradient (6.2–7.7:1) |
+| `--qx-primary` | `#D03246` | `#FF7A85` | Primary buttons, checkboxes, active tabs |
+| `--qx-on-primary` | `#FFFFFF` (5.0:1) | `#171717` (7.2:1) | Text on primary fills |
+| `--qx-primary-hover` / `-active` | `#B72B40` / `#A32539` | `#FF8C95` / `#FF626F` | Button states |
+| `--qx-accent-text` | `#C42F45` (5.5:1 on white) | `#FF8C95` | Coloured link and icon text |
+| `--qx-tint` / `--qx-tint-strong` | coral at 10% / 16% | 14% / 22% | Selected sidebar rows, list rows, rail hover |
+| `--qx-focus-ring` | coral 2px | coral 2px | Focus on inputs, buttons, checkboxes, tabs |
+
+**Logo:** no Qulix logo files are in the app yet. Until they are added, Desk and the login page
+show whatever Website Settings → App Logo provides (Frappe's own logo by default), and the theme
+adds no wordmark. When the official files are supplied, add them to `public/images/` and set them
+in Website Settings / Navbar Settings for the site.
 
 ### How the theme toggle works
 
@@ -162,9 +197,12 @@ System Settings, Navbar Settings and Translation.
 
 ### Limitations and manual checks
 
-- The HRMS mobile PWA (`/hrms`, Vue + frappe-ui) and public website pages do not load Desk
-  includes, so this theme does not apply there.
+- The HRMS mobile PWA (`/hrms`, Vue + frappe-ui) does not load Desk includes, so this theme does
+  not apply there. Of the public website pages, only the login and update-password pages are
+  styled.
 - Frappe Charts set their colours per chart in JavaScript; the theme does not change chart colours.
+- The Qulix colours are estimates from the brand images, and the Qulix logo is not yet included
+  (see "Qulix brand tokens").
 - Visual QA of HRMS screens in both themes needs a person in a browser: workspaces and charts,
   list views with filters, Employee / Leave Application / Salary Slip forms, child tables,
   dialogs, the notifications panel, report datatables, and mobile widths.
