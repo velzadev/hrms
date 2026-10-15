@@ -1,0 +1,79 @@
+/*
+ * Company UI Theme — Quicxly styling for the login and password pages.
+ *
+ * Loaded through `web_include_css` in hooks.py, which Frappe adds to every
+ * website page; every rule here is scoped to the login and update-password
+ * pages (body[data-path=...]) so other website pages are not changed.
+ *
+ * Only the primary action, focus ring and a decorative brand accent change.
+ * The logo shown is whatever Website Settings → App Logo provides (Frappe's
+ * own logo by default); this file ships no logo.
+ *
+ * Keep these tokens in step with section 1 of company_ui_theme.css.
+ */
+
+body[data-path="login"],
+body[data-path="update-password"] {
+	--qx-coral: #ff626f;
+	--qx-orange: #ff8b3d;
+	--qx-gradient: linear-gradient(135deg, var(--qx-coral) 0%, var(--qx-orange) 100%);
+	--qx-primary: #d03246; /* white text 5.0:1 */
+	--qx-primary-hover: #b72b40;
+	--qx-primary-active: #a32539;
+	--qx-on-primary: #ffffff;
+	--qx-accent-text: #c42f45;
+	--qx-focus-ring: 0 0 0 2px rgba(208, 50, 70, 0.45);
+}
+
+/* Primary actions: Continue, Send Link, Send login link */
+body[data-path="login"] .es-button[data-variant="solid"]:not([data-theme]),
+body[data-path="update-password"] .es-button[data-variant="solid"]:not([data-theme]) {
+	--bt-solid-bg: var(--qx-primary);
+	--bt-solid-bg-hover: var(--qx-primary-hover);
+	--bt-solid-bg-active: var(--qx-primary-active);
+	--bt-solid-fg: var(--qx-on-primary);
+}
+
+body[data-path="login"] .btn.btn-primary,
+body[data-path="update-password"] .btn.btn-primary {
+	background-color: var(--qx-primary);
+	border-color: var(--qx-primary);
+	color: var(--qx-on-primary);
+}
+
+/* Focus ring on fields and buttons */
+body[data-path="login"] .form-control:focus,
+body[data-path="login"] .es-button:focus-visible,
+body[data-path="update-password"] .form-control:focus,
+body[data-path="update-password"] .es-button:focus-visible {
+	outline: none;
+	box-shadow: var(--qx-focus-ring);
+}
+
+/* Links (Forgot password?, Sign up) */
+body[data-path="login"] .page-card a:not(.es-button):hover,
+body[data-path="update-password"] .page-card a:not(.es-button):hover {
+	color: var(--qx-accent-text);
+}
+
+/* Quicxly logo (mark + wordmark): Frappe sizes this slot as a 32x32 square, which would squeeze
+   the wide logo. Keep its own proportions instead. */
+body[data-path="login"] img.app-logo[src*="quicxly-logo"],
+body[data-path="update-password"] img.app-logo[src*="quicxly-logo"] {
+	width: auto;
+	height: 40px;
+	max-height: 40px;
+	max-width: 100%;
+	object-fit: contain;
+}
+
+/* Decorative brand accent above the sign-in card */
+body[data-path="login"] .page-card::before,
+body[data-path="update-password"] .page-card::before {
+	content: "";
+	display: block;
+	width: 48px;
+	height: 4px;
+	border-radius: 2px;
+	background: var(--qx-gradient);
+}
