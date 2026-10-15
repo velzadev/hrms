@@ -86,10 +86,12 @@ The CSS and JS are plain (non-`.bundle`) files served from `/assets/company_ui_t
 | `company_ui_theme/translations/en.csv` | English display strings that name the product ("Frappe HR" → "Quicxly") |
 | `company_ui_theme/branding.py` | Optional per-site branding script (see below) |
 
-While `bench start` is running, a hard refresh is enough after editing them. Run
-`bench build --app company_ui_theme` after adding new files or on a fresh bench. Desk includes
-these files without a version query, so after deploying a change run `bench clear-cache` and ask
-users to hard-refresh.
+`hooks.py` adds a content hash to each URL (`company_ui_theme.css?v=<hash>`), because Frappe serves
+`/assets` with a 12-hour browser cache. A changed file therefore gets a new URL and every browser
+fetches it on its next page load; no hard refresh is needed. The hash is computed when the web
+server loads the hooks, so after changing a CSS/JS file run `bench --site <your-site> clear-cache`
+and restart the web server (`bench restart`, or stop and start `bench start`). Run
+`bench build --app company_ui_theme` after adding new files or on a fresh bench.
 
 To restyle, change only the tokens in section 1 of `company_ui_theme.css` (`--qx-*` brand colours,
 `--ui-theme-*` radii and shadows), and the matching block at the top of

@@ -146,6 +146,18 @@ class TestWebsiteContext(unittest.TestCase):
 
 
 class TestAssetsAndTranslations(unittest.TestCase):
+	def test_hook_urls_carry_content_hash(self):
+		import hashlib
+
+		from company_ui_theme import hooks
+
+		urls = hooks.app_include_css + hooks.app_include_js + hooks.web_include_css
+		self.assertEqual(len(urls), 4)
+		for url in urls:
+			path, _, version = url.partition("?v=")
+			data = (PUBLIC / path.removeprefix("/assets/company_ui_theme/")).read_bytes()
+			self.assertEqual(version, hashlib.sha1(data).hexdigest()[:10], url)
+
 	def test_default_assets_exist(self):
 		for key in ("product_mark", "logo", "splash", "favicon"):
 			url = boot.DEFAULT_BRAND[key]
