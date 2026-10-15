@@ -79,7 +79,9 @@ The CSS and JS are plain (non-`.bundle`) files served from `/assets/company_ui_t
 | `company_ui_theme/public/css/company_ui_theme_web.css` | Login and update-password page styling (scoped to those pages) |
 | `company_ui_theme/public/js/company_ui_theme.js` | Theme controller: saved preference, header toggle, sync with Frappe's switcher |
 | `company_ui_theme/hooks.py` | Includes the Desk CSS/JS (`app_include_css` / `app_include_js`) and the login CSS (`web_include_css`), registers `boot.py` |
-| `company_ui_theme/boot.py` | Optional app-switcher relabelling (see below) |
+| `company_ui_theme/boot.py` | Qulix label for the HRMS app tile, switcher and rail; optional per-site overrides (see below) |
+| `company_ui_theme/website.py` | Qulix as the default app name in the browser title (`update_website_context` hook) |
+| `company_ui_theme/translations/en.csv` | English display strings that name the product ("Frappe HR" → "Qulix") |
 | `company_ui_theme/branding.py` | Optional per-site branding script (see below) |
 
 While `bench start` is running, a hard refresh is enough after editing them. Run
@@ -135,10 +137,32 @@ in Website Settings / Navbar Settings for the site.
 - Blocked `localStorage` (private mode, policy) is handled; the theme still switches for the session.
 - Motion is limited to short colour transitions, only under `prefers-reduced-motion: no-preference`.
 
+### Qulix product name (white-label)
+
+Out of the box, with no configuration and no database changes, the app presents the HRMS
+product as **Qulix**:
+
+| Where | Before | After | How |
+| --- | --- | --- | --- |
+| Apps screen tile, app switcher, rail and sidebar header for HRMS | Frappe HR | Qulix | `boot.py` (`extend_bootinfo`) relabels `bootinfo.app_data` |
+| Browser title of the Desk shell (and any server-rendered page that shows the app name) | Frappe | Qulix | `website.py` (`update_website_context`), only when the site has not set its own App Name |
+| HR onboarding widget and other English UI strings naming the product | Frappe HR, Get to know Frappe HR | Qulix, Get to know Qulix | `translations/en.csv` (Frappe's standard app translation file) |
+
+The ERPNext and Framework tiles keep their own names. Routes, permissions, installed app names
+and Python packages are unchanged; only what users see is relabelled.
+
+Precedence: a site's own Website/System Settings → App Name and its Translation records still win
+over these defaults, and any key below in `company_ui_brand` overrides the built-in default.
+
+**Not yet branded (needs the official Qulix logo files):** the HRMS tile and rail icon, the logo
+at the top of the apps screen, the loading splash, the login logo and the favicon still show
+Frappe's or Frappe HR's images.
+
 ### Optional: per-site app-switcher labels and branding
 
 Both features read one optional key from a site's own `site_config.json`, `company_ui_brand`.
-Without that key nothing changes, and this repository ships no branding values or logo files.
+For the app labels, any key given there overrides the built-in Qulix default above; this
+repository ships no logo files.
 
 ```json
 "company_ui_brand": {
@@ -151,7 +175,8 @@ Without that key nothing changes, and this repository ships no branding values o
 ```
 
 1. **`boot.py`** (`extend_bootinfo` hook) relabels the Desk app switcher, rail and sidebar header
-   on every boot: the `product_app` gets `product_name` and `product_mark`; apps in `app_titles`
+   on every boot: the `product_app` (default `hrms`) gets `product_name` (default `Qulix`) and
+   `product_mark`; apps in `app_titles`
    get that label and Frappe's letter icon. `app_tile_roles` hides an app's tile from users with
    none of the listed roles. This is display-only; access to those pages is unchanged.
 2. **`branding.py`** writes branding settings once, only when run explicitly for one site:

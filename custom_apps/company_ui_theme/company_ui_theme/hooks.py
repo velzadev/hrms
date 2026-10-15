@@ -18,6 +18,10 @@ web_include_css = ["/assets/company_ui_theme/css/company_ui_theme_web.css"]
 # Boot
 # ----
 
-# Optional per-site relabelling of the Desk app switcher. It does nothing unless the site's
-# site_config.json has a `company_ui_brand` key (see boot.py and the README).
+# Qulix labels for the HRMS app tile, switcher and product-name strings in Desk. A site can
+# override them with a `company_ui_brand` key in its site_config.json (see boot.py and the README).
 extend_bootinfo = "company_ui_theme.boot.extend_bootinfo"
+
+# Qulix as the product name in the browser title and on the login page, unless the site has set
+# its own App Name (see website.py).
+update_website_context = "company_ui_theme.website.update_website_context"
