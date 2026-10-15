@@ -1,48 +1,237 @@
 /*
- * Company UI Theme — neutral Desk styling for Frappe v16 / HRMS v16.
+ * Company UI Theme — Qulix visual theme for the Frappe v16 / HRMS v16 Desk.
  *
  * Loaded through `app_include_css` in hooks.py, so it only reaches Desk pages
- * (desk.html). Public website pages, the login page and the HRMS PWA at /hrms
- * do not load it.
+ * (desk.html). The login page has its own small stylesheet
+ * (company_ui_theme_web.css); other website pages and the HRMS PWA at /hrms
+ * are not themed.
  *
- * Colours are Frappe's own: every colour below is one of Frappe's theme
- * variables (--card-bg, --border-color, --text-muted, --focus-default, ...),
- * so the light and dark themes stay exactly Frappe's. This file only adds
- * shape (radii), borders, soft shadows, a few type weights and the styles for
- * the header theme toggle. Layout, sizes, fields and behaviour are unchanged.
+ * Surfaces, text and borders stay Frappe's own neutral theme variables
+ * (--card-bg, --border-color, --text-color, --text-muted, ...), so the light
+ * and dark themes keep Frappe's contrast. The Qulix identity is applied only
+ * to primary actions, focus, selection and active states, plus a few
+ * decorative gradient accents. Layout, sizes, fields and behaviour are
+ * unchanged.
  *
  * Theme selection is Frappe's own: <html data-theme="light|dark">, set by
  * frappe.ui.set_theme() from <html data-theme-mode>. company_ui_theme.js only
- * changes data-theme-mode. Dark-only rules use :root[data-theme="dark"], which
- * never matches the `data-theme` attribute Frappe also puts on badges, buttons
- * and theme-preview cards.
+ * changes data-theme-mode. Theme-specific rules use :root[data-theme=...],
+ * which never matches the `data-theme` attribute Frappe also puts on badges,
+ * buttons and theme-preview cards.
  *
- * To restyle, change the tokens in section 1 only. The --ui-theme-* prefix is
- * this app's namespace.
+ * To adjust the brand, change the tokens in section 1 only. The --qx-* prefix
+ * holds brand colours; --ui-theme-* holds shape and elevation.
  */
 
 /* ------------------------------------------------------------------ */
-/* 1. Tokens (shape and elevation only — no colours of their own)      */
+/* 1. Tokens                                                           */
 /* ------------------------------------------------------------------ */
 
 :root {
+	/* Qulix brand reference (estimated from the brand images; adjust here
+	   once the official logo files and colour values are available) */
+	--qx-coral: #ff626f;
+	--qx-orange: #ff8b3d;
+	--qx-gradient: linear-gradient(135deg, var(--qx-coral) 0%, var(--qx-orange) 100%);
+	/* Glyphs on the gradient: dark ink is 6.2:1 on coral, 7.7:1 on orange */
+	--qx-on-gradient: #171717;
+
+	/* Shape and elevation */
 	--ui-theme-radius: 8px; /* controls, menus, sidebar rows */
 	--ui-theme-radius-lg: 12px; /* cards, widgets, dialogs */
 	--ui-theme-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 2px 8px -2px rgba(0, 0, 0, 0.06);
 	--ui-theme-shadow-raised: 0 8px 24px -6px rgba(0, 0, 0, 0.14), 0 0 0 1px rgba(0, 0, 0, 0.04);
 }
 
-/* Flat cards in dark mode; menus and dialogs keep a deeper shadow */
+/* Light. White text on the reference coral is only 2.9:1, so filled controls
+   that carry text use a deeper coral from the same hue. */
+:root:not([data-theme="dark"]) {
+	--qx-primary: #d03246; /* white text 5.0:1 */
+	--qx-primary-hover: #b72b40;
+	--qx-primary-active: #a32539;
+	--qx-on-primary: #ffffff;
+	--qx-accent-text: #c42f45; /* coloured text, 5.5:1 on white */
+	--qx-tint: rgba(255, 98, 111, 0.1); /* selected rows and tiles */
+	--qx-tint-strong: rgba(255, 98, 111, 0.16);
+	--qx-focus-ring: 0 0 0 2px rgba(208, 50, 70, 0.45);
+	--qx-selection: rgba(255, 98, 111, 0.22);
+}
+
+/* Dark. A light coral fill with dark text (7.2:1) instead of white text. */
 :root[data-theme="dark"] {
+	--qx-primary: #ff7a85;
+	--qx-primary-hover: #ff8c95;
+	--qx-primary-active: #ff626f;
+	--qx-on-primary: #171717;
+	--qx-accent-text: #ff8c95; /* 8:1 on Frappe's dark surfaces */
+	--qx-tint: rgba(255, 98, 111, 0.14);
+	--qx-tint-strong: rgba(255, 98, 111, 0.22);
+	--qx-focus-ring: 0 0 0 2px rgba(255, 122, 133, 0.6);
+	--qx-selection: rgba(255, 98, 111, 0.35);
+
+	/* Flat cards in dark mode; menus and dialogs keep a deeper shadow */
 	--ui-theme-shadow: none;
 	--ui-theme-shadow-raised: 0 8px 24px -8px rgba(0, 0, 0, 0.6);
 }
 
+/* Point Frappe's own primary-action and focus tokens at the brand, so
+   components that read them follow without per-component rules. */
+:root:not([data-theme="dark"]),
+:root[data-theme="dark"] {
+	--btn-primary: var(--qx-primary);
+	--checkbox-gradient: linear-gradient(180deg, var(--qx-primary), var(--qx-primary));
+	--checkbox-focus-shadow: var(--qx-focus-ring);
+	--focus-default: var(--qx-focus-ring);
+}
+
 /* ------------------------------------------------------------------ */
-/* 2. Component rules                                                  */
+/* 2. Page shell: header, sidebar, rail, search                        */
 /* ------------------------------------------------------------------ */
 
-/* ---- Cards and workspace widgets: 12px radius, 1px border, soft shadow ---- */
+/* Thin brand stripe along the bottom edge of each page header (decorative).
+   Drawn as a background layer so the header's own positioning (sticky on most
+   pages, unset on reports) and size are untouched. */
+.page-head {
+	background-image: var(--qx-gradient);
+	background-size: 100% 2px;
+	background-position: left bottom;
+	background-repeat: no-repeat;
+}
+
+.body-sidebar .standard-sidebar-item.active-sidebar {
+	background: var(--qx-tint);
+	box-shadow: inset 3px 0 0 var(--qx-coral);
+	border-radius: var(--ui-theme-radius);
+}
+
+.body-sidebar .standard-sidebar-item.active-sidebar .item-anchor {
+	font-weight: 500;
+}
+
+.sidebar-header .header-title {
+	font-weight: 600;
+}
+
+/* Rail: the active module is a gradient tile with a dark glyph. The :root
+   prefix outranks the `.dock-item--duotone.active` rule Frappe injects inline
+   after this file, which would otherwise keep its gray glyph tones. */
+:root .dock-item.active,
+:root .dock-item--duotone.active {
+	background: var(--qx-gradient);
+	color: var(--qx-on-gradient);
+	--icon-stroke: var(--qx-on-gradient);
+	--duotone-dark: var(--qx-on-gradient);
+	--duotone-light: rgba(255, 255, 255, 0.6);
+}
+
+@media (hover: hover) {
+	.dock-item:not(.active):hover {
+		background: var(--qx-tint);
+	}
+}
+
+/* Search field and toolbar inputs: brand focus ring */
+.search-bar input:focus,
+.search-bar .form-control:focus {
+	box-shadow: var(--qx-focus-ring);
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Controls                                                         */
+/* ------------------------------------------------------------------ */
+
+/* Primary buttons (Bootstrap and Espresso). Red/danger Espresso buttons carry
+   a data-theme attribute and are left alone. */
+.btn.btn-primary {
+	background-color: var(--qx-primary);
+	border-color: var(--qx-primary);
+	color: var(--qx-on-primary);
+	border-radius: var(--ui-theme-radius);
+	--icon-stroke: currentColor;
+	--icon-fill-bg: var(--qx-primary);
+}
+
+@media (hover: hover) {
+	.btn.btn-primary:hover {
+		background-color: var(--qx-primary-hover);
+		border-color: var(--qx-primary-hover);
+		color: var(--qx-on-primary);
+	}
+}
+
+.btn.btn-primary:active {
+	background-color: var(--qx-primary-active);
+	border-color: var(--qx-primary-active);
+}
+
+.es-button:not([data-theme]) {
+	--bt-solid-bg: var(--qx-primary);
+	--bt-solid-bg-hover: var(--qx-primary-hover);
+	--bt-solid-bg-active: var(--qx-primary-active);
+	--bt-solid-fg: var(--qx-on-primary);
+}
+
+.btn.btn-primary:focus-visible,
+.btn.btn-default:focus-visible,
+.es-button:focus-visible {
+	outline: none;
+	box-shadow: var(--qx-focus-ring);
+}
+
+.btn:disabled,
+.btn.disabled,
+.es-button:disabled {
+	cursor: not-allowed;
+}
+
+/* Inputs and selects: rounded, brand focus ring */
+.frappe-control .form-control,
+.page-form .form-control,
+.modal .form-control {
+	border-radius: var(--ui-theme-radius);
+}
+
+.frappe-control .form-control:focus,
+.frappe-control .form-control:focus-within,
+.page-form .form-control:focus,
+.modal .form-control:focus {
+	box-shadow: var(--qx-focus-ring);
+}
+
+/* Checkboxes: brand fill. Light mode keeps Frappe's white tick on the deep
+   coral; dark mode keeps Frappe's dark tick on the light coral. */
+input[type="checkbox"]:checked:not(:disabled):not(.disabled-selected) {
+	background-color: var(--qx-primary);
+}
+
+/* Links inside content */
+.form-layout a:not(.btn):not(.es-button):not(.nav-link):hover,
+.ql-editor a,
+.frappe-list .list-row a.ellipsis:hover {
+	color: var(--qx-accent-text);
+}
+
+/* Form tabs and Espresso tabs (reports, settings dialogs) */
+.form-tabs-list .form-tabs .nav-item .nav-link.active {
+	font-weight: 500;
+	border-bottom-color: var(--qx-primary);
+	box-shadow: inset 0 -1px 0 var(--qx-primary);
+}
+
+.form-tabs-list .form-tabs .nav-item .nav-link:focus-visible {
+	box-shadow: var(--qx-focus-ring);
+	border-radius: 4px;
+}
+
+.es-tabs__indicator {
+	background-color: var(--qx-primary);
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Content surfaces                                                 */
+/* ------------------------------------------------------------------ */
+
+/* Cards and workspace widgets: 12px radius, 1px border, soft shadow */
 .frappe-card,
 .widget,
 .number-widget-box,
@@ -64,51 +253,19 @@
 	font-weight: 600;
 }
 
-/* ---- Sidebar ---- */
-.body-sidebar .standard-sidebar-item.active-sidebar {
-	border-radius: var(--ui-theme-radius);
+/* Lists: selected rows use the brand tint */
+.frappe-list .list-row-container:has(.list-row-checkbox:checked) .list-row {
+	background-color: var(--qx-tint);
 }
 
-.body-sidebar .standard-sidebar-item.active-sidebar .item-anchor {
-	font-weight: 500;
-}
-
-.sidebar-header .header-title {
-	font-weight: 600;
-}
-
-/* ---- Buttons ---- */
-.btn.btn-primary {
-	border-radius: var(--ui-theme-radius);
-}
-
-.btn.btn-primary:focus-visible,
-.es-button:focus-visible {
-	outline: none;
-	box-shadow: var(--focus-default);
-}
-
-.btn:disabled,
-.btn.disabled,
-.es-button:disabled {
-	cursor: not-allowed;
-}
-
-/* ---- Inputs ---- */
-.frappe-control .form-control,
-.page-form .form-control,
-.modal .form-control {
-	border-radius: var(--ui-theme-radius);
-}
-
-/* ---- Child-table and report headers: neutral, slightly recessed ---- */
+/* Child-table and report headers: neutral, slightly recessed */
 .form-grid .grid-heading-row,
 .dt-cell--header .dt-cell__content {
 	background-color: var(--subtle-fg);
 	color: var(--text-muted);
 }
 
-/* ---- Dialogs ---- */
+/* Dialogs */
 .modal-content {
 	border: 1px solid var(--border-color);
 	border-radius: var(--ui-theme-radius-lg);
@@ -123,7 +280,7 @@
 	border-top-color: var(--border-color);
 }
 
-/* ---- Menus / popovers: rounded, bordered, visible hover ---- */
+/* Menus / popovers: rounded, bordered, visible hover */
 .dropdown-menu,
 .es-menu,
 .awesomplete > ul {
@@ -139,8 +296,18 @@
 	background-color: var(--fg-hover-color);
 }
 
+/* Notifications: unread items get a brand edge */
+.notifications-list .notification-item.unread {
+	box-shadow: inset 3px 0 0 var(--qx-coral);
+}
+
+/* Text selection */
+::selection {
+	background: var(--qx-selection);
+}
+
 /* ------------------------------------------------------------------ */
-/* 3. Theme toggle (inserted by company_ui_theme.js into .page-head)   */
+/* 5. Theme toggle (inserted by company_ui_theme.js into .page-head)   */
 /* ------------------------------------------------------------------ */
 
 .ui-theme-toggle {
@@ -151,13 +318,13 @@
 
 @media (hover: hover) {
 	.ui-theme-toggle:hover {
-		color: var(--text-color);
+		color: var(--qx-accent-text);
 	}
 }
 
 .ui-theme-toggle:focus-visible {
 	outline: none;
-	box-shadow: var(--focus-default);
+	box-shadow: var(--qx-focus-ring);
 }
 
 /* Show the icon for the mode the button switches *to* */
@@ -171,7 +338,7 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* 4. Motion                                                           */
+/* 6. Motion                                                           */
 /* ------------------------------------------------------------------ */
 
 @media (prefers-reduced-motion: no-preference) {

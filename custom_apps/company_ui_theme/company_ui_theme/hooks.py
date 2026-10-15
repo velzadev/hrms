@@ -12,6 +12,9 @@ app_license = "mit"
 app_include_css = ["/assets/company_ui_theme/css/company_ui_theme.css"]
 app_include_js = ["/assets/company_ui_theme/js/company_ui_theme.js"]
 
+# Website pages. Every rule in this file is scoped to the login and update-password pages.
+web_include_css = ["/assets/company_ui_theme/css/company_ui_theme_web.css"]
+
 # Boot
 # ----
 
