@@ -1,5 +1,5 @@
 /*
- * Company UI Theme — Qulix visual theme for the Frappe v16 / HRMS v16 Desk.
+ * Company UI Theme — Quicxly visual theme for the Frappe v16 / HRMS v16 Desk.
  *
  * Loaded through `app_include_css` in hooks.py, so it only reaches Desk pages
  * (desk.html). The login page has its own small stylesheet
@@ -8,7 +8,7 @@
  *
  * Surfaces, text and borders stay Frappe's own neutral theme variables
  * (--card-bg, --border-color, --text-color, --text-muted, ...), so the light
- * and dark themes keep Frappe's contrast. The Qulix identity is applied only
+ * and dark themes keep Frappe's contrast. The Quicxly identity is applied only
  * to primary actions, focus, selection and active states, plus a few
  * decorative gradient accents. Layout, sizes, fields and behaviour are
  * unchanged.
@@ -28,7 +28,7 @@
 /* ------------------------------------------------------------------ */
 
 :root {
-	/* Qulix brand reference (estimated from the brand images; adjust here
+	/* Quicxly brand reference (estimated from the brand images; adjust here
 	   once the official logo files and colour values are available) */
 	--qx-coral: #ff626f;
 	--qx-orange: #ff8b3d;
@@ -335,6 +335,35 @@ input[type="checkbox"]:checked:not(:disabled):not(.disabled-selected) {
 
 :root[data-theme="dark"] .ui-theme-toggle .ui-theme-icon-sun {
 	display: inline-flex;
+}
+
+/* Apps screen (launcher) top-left logo. Frappe renders it server-side from Navbar Settings →
+   App Logo, falling back to its own framework logo, and no hook reaches that page. Only that
+   built-in fallback is swapped for the Quicxly mark; a logo set in Navbar Settings has another
+   src and is left alone. */
+.navbar-home img[src$="/assets/frappe/images/frappe-framework-logo.svg"] {
+	content: url("/assets/company_ui_theme/images/quicxly-mark-512.png");
+}
+
+/* User menus: Frappe hard-codes "About" (its version dialog) and "Frappe Support" (support.frappe.io)
+   into the apps-screen avatar menu, so the boot hook cannot remove them. They are matched by their
+   icons, only inside menus that also hold Logout (i.e. user menus). */
+.es-menu:has(use[href="#icon-log-out"]) .es-menu__item:has(use[href="#icon-info"]),
+.es-menu:has(use[href="#icon-log-out"]) .es-menu__item:has(use[href="#icon-life-buoy"]) {
+	display: none;
+}
+
+/* Upstream product advertisements in the sidebar (e.g. "Switch to Frappe CRM"). */
+.promotional-banner[href*="frappe.io"],
+.promotional-banner[href*="erpnext.com"] {
+	display: none;
+}
+
+/* Loading splash: the Quicxly mark (set by website.py) at a calm size. The <img> carries an
+   inline `width: auto`, so only the height is set and the square keeps its proportions. The mark
+   is a self-contained tile, so it reads on both the light and the dark splash. */
+.splash img[src*="quicxly-mark"] {
+	height: 88px;
 }
 
 /* ------------------------------------------------------------------ */

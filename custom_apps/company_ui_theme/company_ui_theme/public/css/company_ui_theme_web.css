@@ -1,5 +1,5 @@
 /*
- * Company UI Theme — Qulix styling for the login and password pages.
+ * Company UI Theme — Quicxly styling for the login and password pages.
  *
  * Loaded through `web_include_css` in hooks.py, which Frappe adds to every
  * website page; every rule here is scoped to the login and update-password
@@ -54,6 +54,17 @@ body[data-path="update-password"] .es-button:focus-visible {
 body[data-path="login"] .page-card a:not(.es-button):hover,
 body[data-path="update-password"] .page-card a:not(.es-button):hover {
 	color: var(--qx-accent-text);
+}
+
+/* Quicxly logo (mark + wordmark): Frappe sizes this slot as a 32x32 square, which would squeeze
+   the wide logo. Keep its own proportions instead. */
+body[data-path="login"] img.app-logo[src*="quicxly-logo"],
+body[data-path="update-password"] img.app-logo[src*="quicxly-logo"] {
+	width: auto;
+	height: 40px;
+	max-height: 40px;
+	max-width: 100%;
+	object-fit: contain;
 }
 
 /* Decorative brand accent above the sign-in card */

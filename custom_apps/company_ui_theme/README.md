@@ -1,16 +1,16 @@
 ## Company UI Theme
 
-The Qulix visual theme for the Frappe HRMS v16 Desk (Frappe v16, ERPNext v16, HRMS v16).
+The Quicxly visual theme for the Frappe HRMS v16 Desk (Frappe v16, ERPNext v16, HRMS v16).
 
 | Branch | Theme in this folder |
 | --- | --- |
-| `main` | **Qulix** (this README) |
+| `main` | **Quicxly** (this README) |
 | `version-16` | Brand-neutral (Frappe's own colours) |
 
 It is a pure UI layer: no DocTypes, no patches, no database changes, and no Frappe, ERPNext or
 HRMS files are modified. It adds:
 
-- **Qulix dashboard styling** for Desk: the coral/orange brand on primary buttons, focus rings,
+- **Quicxly dashboard styling** for Desk: the coral/orange brand on primary buttons, focus rings,
   checkboxes, tabs, selected sidebar rows and list rows, the active rail tile and a thin gradient
   stripe under each page header; plus rounded corners, 1px borders, soft shadows in light mode
   and flat cards in dark mode. Surfaces, text and borders stay Frappe's own theme variables.
@@ -29,7 +29,7 @@ instead of being fetched with `bench get-app`.
 
 - A Frappe v16 bench with Frappe, ERPNext and HRMS v16 (Python 3.14, as for Frappe v16)
 - HRMS fetched from `https://github.com/velzadev/hrms`, which contains this folder: branch
-  `main` for the Qulix theme, `version-16` for the neutral one
+  `main` for the Quicxly theme, `version-16` for the neutral one
 
 ### Installation
 
@@ -75,13 +75,15 @@ The CSS and JS are plain (non-`.bundle`) files served from `/assets/company_ui_t
 
 | File | Purpose |
 | --- | --- |
-| `company_ui_theme/public/css/company_ui_theme.css` | Qulix brand tokens, shape and elevation tokens, Desk component rules, toggle styles |
+| `company_ui_theme/public/css/company_ui_theme.css` | Quicxly brand tokens, shape and elevation tokens, Desk component rules, toggle styles |
 | `company_ui_theme/public/css/company_ui_theme_web.css` | Login and update-password page styling (scoped to those pages) |
 | `company_ui_theme/public/js/company_ui_theme.js` | Theme controller: saved preference, header toggle, sync with Frappe's switcher |
-| `company_ui_theme/hooks.py` | Includes the Desk CSS/JS (`app_include_css` / `app_include_js`) and the login CSS (`web_include_css`), registers `boot.py` |
-| `company_ui_theme/boot.py` | Qulix label for the HRMS app tile, switcher and rail; optional per-site overrides (see below) |
-| `company_ui_theme/website.py` | Qulix as the default app name in the browser title (`update_website_context` hook) |
-| `company_ui_theme/translations/en.csv` | English display strings that name the product ("Frappe HR" → "Qulix") |
+| `company_ui_theme/public/js/company_ui_theme_menus.js` | Hides upstream-product rows (Frappe School, About, …) from the Desk Help menu, using rules sent by `boot.py` |
+| `company_ui_theme/public/images/` | Quicxly logo assets (temporary; see its README) |
+| `company_ui_theme/hooks.py` | Includes the Desk CSS/JS (`app_include_css` / `app_include_js`) and the login CSS (`web_include_css`), registers `boot.py` and `website.py` |
+| `company_ui_theme/boot.py` | Quicxly label for the HRMS app tile, switcher and rail; optional per-site overrides (see below) |
+| `company_ui_theme/website.py` | Quicxly as the default app name in the browser title (`update_website_context` hook) |
+| `company_ui_theme/translations/en.csv` | English display strings that name the product ("Frappe HR" → "Quicxly") |
 | `company_ui_theme/branding.py` | Optional per-site branding script (see below) |
 
 While `bench start` is running, a hard refresh is enough after editing them. Run
@@ -95,9 +97,9 @@ To restyle, change only the tokens in section 1 of `company_ui_theme.css` (`--qx
 `var(--text-muted)`, `var(--border-color)`, `var(--card-bg)`, `var(--fg-color)`) instead of
 hard-coded values, and test both themes.
 
-### Qulix brand tokens
+### Quicxly brand tokens
 
-The reference colours are estimates taken from the Qulix brand images and are meant to be
+The reference colours are estimates taken from the Quicxly brand images and are meant to be
 adjusted once official values are available. Filled controls that carry text use deeper or
 lighter shades of the same hue so that text meets WCAG AA (4.5:1); the true gradient is used only
 for decorative accents, with dark glyphs on it.
@@ -114,10 +116,10 @@ for decorative accents, with dark glyphs on it.
 | `--qx-tint` / `--qx-tint-strong` | coral at 10% / 16% | 14% / 22% | Selected sidebar rows, list rows, rail hover |
 | `--qx-focus-ring` | coral 2px | coral 2px | Focus on inputs, buttons, checkboxes, tabs |
 
-**Logo:** no Qulix logo files are in the app yet. Until they are added, Desk and the login page
-show whatever Website Settings → App Logo provides (Frappe's own logo by default), and the theme
-adds no wordmark. When the official files are supplied, add them to `public/images/` and set them
-in Website Settings / Navbar Settings for the site.
+**Logo:** the logo files in `public/images/` are **temporary** assets cut from the only supplied
+logo, a WhatsApp-compressed JPEG (see `public/images/README.md`). Replace them with the official
+transparent originals when available. Only the mark is used on dark surfaces, because no
+light/white wordmark has been supplied.
 
 ### How the theme toggle works
 
@@ -137,31 +139,41 @@ in Website Settings / Navbar Settings for the site.
 - Blocked `localStorage` (private mode, policy) is handled; the theme still switches for the session.
 - Motion is limited to short colour transitions, only under `prefers-reduced-motion: no-preference`.
 
-### Qulix product name (white-label)
+### Quicxly branding (white-label)
 
-Out of the box, with no configuration and no database changes, the app presents the HRMS
-product as **Qulix**:
+Out of the box, with no configuration and no database changes, Desk is presented as **Quicxly™**
+(the ™ appears in the logo artwork, not in UI labels):
 
 | Where | Before | After | How |
 | --- | --- | --- | --- |
-| Apps screen tile, app switcher, rail and sidebar header for HRMS | Frappe HR | Qulix | `boot.py` (`extend_bootinfo`) relabels `bootinfo.app_data` |
-| Browser title of the Desk shell (and any server-rendered page that shows the app name) | Frappe | Qulix | `website.py` (`update_website_context`), only when the site has not set its own App Name |
-| HR onboarding widget and other English UI strings naming the product | Frappe HR, Get to know Frappe HR | Qulix, Get to know Qulix | `translations/en.csv` (Frappe's standard app translation file) |
+| Apps screen: HRMS tile | Frappe HR + Frappe HR logo | Quicxly + Quicxly mark | `boot.py` relabels `bootinfo.app_data` |
+| Apps screen: ERPNext / Framework tiles | ERPNext / Framework + their logos | Business / Administration + neutral letter icons | `boot.py` (`app_titles`) |
+| Apps screen: top-left logo | Frappe logo | Quicxly mark | CSS (only Frappe's built-in fallback image is swapped; see note) |
+| Sidebar header logo for the HRMS app | Frappe HR logo | Quicxly mark | `boot.py` |
+| Login and update-password pages | Frappe logo | Quicxly logo (mark + wordmark) | `website.py` (`update_website_context`) |
+| Favicon (login and Desk) | ERPNext favicon | Quicxly mark | `website.py` |
+| Desk loading splash | ERPNext logo | Quicxly mark (light and dark) | `website.py` |
+| Browser title of the Desk shell | Frappe | Quicxly | `website.py` |
+| HR / ERPNext onboarding, ERPNext Settings | Frappe HR, ERPNext | Quicxly, Business | `translations/en.csv` |
+| User menu (apps screen) | About, Frappe Support | removed | CSS (Frappe hard-codes them) |
+| Sidebar Help menu | Documentation, User Forum, Frappe School, Report an Issue, About, Frappe Support (all upstream sites) | removed; System Health and any site-added rows stay | `company_ui_theme_menus.js`, rules from `boot.py` |
+| Sidebar advertisement | "Switch to Frappe CRM" | hidden | CSS |
 
-The ERPNext and Framework tiles keep their own names. Routes, permissions, installed app names
-and Python packages are unchanged; only what users see is relabelled.
+Routes, permissions, installed app names and Python packages are unchanged; every app stays
+reachable. Hidden menu rows are hidden in the browser only (Navbar Settings is not edited).
 
-Precedence: a site's own Website/System Settings → App Name and its Translation records still win
-over these defaults, and any key below in `company_ui_brand` overrides the built-in default.
+Precedence: a logo, favicon, splash or App Name set in the site's Website / Navbar / System
+Settings, and the site's Translation records, always win over these defaults; any key in
+`company_ui_brand` (below) overrides the built-in default.
 
-**Not yet branded (needs the official Qulix logo files):** the HRMS tile and rail icon, the logo
-at the top of the apps screen, the loading splash, the login logo and the favicon still show
-Frappe's or Frappe HR's images.
+The apps-screen top-left logo is rendered server-side from Navbar Settings → App Logo, which no
+theme hook can reach, so the CSS swaps Frappe's default image there. Setting Navbar Settings →
+App Logo on a site is the fully supported alternative.
 
 ### Optional: per-site app-switcher labels and branding
 
 Both features read one optional key from a site's own `site_config.json`, `company_ui_brand`.
-For the app labels, any key given there overrides the built-in Qulix default above; this
+For the app labels, any key given there overrides the built-in Quicxly default above; this
 repository ships no logo files.
 
 ```json
@@ -175,7 +187,7 @@ repository ships no logo files.
 ```
 
 1. **`boot.py`** (`extend_bootinfo` hook) relabels the Desk app switcher, rail and sidebar header
-   on every boot: the `product_app` (default `hrms`) gets `product_name` (default `Qulix`) and
+   on every boot: the `product_app` (default `hrms`) gets `product_name` (default `Quicxly`) and
    `product_mark`; apps in `app_titles`
    get that label and Frappe's letter icon. `app_tile_roles` hides an app's tile from users with
    none of the listed roles. This is display-only; access to those pages is unchanged.
@@ -226,8 +238,14 @@ System Settings, Navbar Settings and Translation.
   not apply there. Of the public website pages, only the login and update-password pages are
   styled.
 - Frappe Charts set their colours per chart in JavaScript; the theme does not change chart colours.
-- The Qulix colours are estimates from the brand images, and the Qulix logo is not yet included
-  (see "Qulix brand tokens").
+- The Quicxly colours are estimates from the brand images, and the logo assets are temporary
+  (see "Quicxly brand tokens" and `public/images/README.md`).
+- Still showing upstream names, outside this theme's reach: the About dialog content (no longer
+  reachable from the menus), Frappe's error and maintenance pages, system/setup screens that print
+  "Frappe" or "ERPNext" in field help text, email footers, the "Frappe" watermark inside HRMS's
+  onboarding video thumbnail, technical URLs (`/assets/frappe/...`), app/package names, and logs.
+- The English translation file only relabels English UI text; other languages show their own
+  translations.
 - Visual QA of HRMS screens in both themes needs a person in a browser: workspaces and charts,
   list views with filters, Employee / Leave Application / Salary Slip forms, child tables,
   dialogs, the notifications panel, report datatables, and mobile widths.
